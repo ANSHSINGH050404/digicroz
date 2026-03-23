@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DigiCroz — Site Audit Report</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,400&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #0a0a0c;
+    --surface: #111115;
+    --card: #16161c;
+    --border: #252530;
+    --accent-red: #ff3b3b;
+    --accent-yellow: #f5c400;
+    --accent-green: #2eff8b;
+    --accent-blue: #38b6ff;
+    --accent-purple: #a259ff;
+    --text: #e8e8f0;
+    --muted: #7a7a90;
+    --radius: 12px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 40px 60px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    background: linear-gradient(180deg, #0f0f14 0%, transparent 100%);
+  }
+  .header-left .eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent-blue);
+    margin-bottom: 10px;
+  }
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 38px;
+    font-weight: 800;
+    line-height: 1.1;
+    color: #fff;
+  }
+  h1 span { color: var(--accent-red); }
+  .header-right {
+    text-align: right;
+  }
+  .score-circle {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: conic-gradient(var(--accent-yellow) 0% 38%, var(--border) 38%);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .score-circle::before {
+    content: '';
+    position: absolute;
+    width: 62px; height: 62px;
+    border-radius: 50%;
+    background: var(--bg);
+  }
+  .score-inner {
+    position: relative; z-index: 1;
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--accent-yellow);
+  }
+  .score-label {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 6px;
+    letter-spacing: 0.1em;
+  }
+
+  /* LAYOUT */
+  main { padding: 50px 60px; max-width: 1200px; margin: 0 auto; }
+
+  /* SECTION HEADERS */
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* SUMMARY GRID */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 50px;
+  }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+    position: relative;
+    overflow: hidden;
+  }
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 2px 2px 0 0;
+  }
+  .stat-card.red::before { background: var(--accent-red); }
+  .stat-card.yellow::before { background: var(--accent-yellow); }
+  .stat-card.green::before { background: var(--accent-green); }
+  .stat-card.blue::before { background: var(--accent-blue); }
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-card.red .stat-num { color: var(--accent-red); }
+  .stat-card.yellow .stat-num { color: var(--accent-yellow); }
+  .stat-card.green .stat-num { color: var(--accent-green); }
+  .stat-card.blue .stat-num { color: var(--accent-blue); }
+  .stat-label { font-size: 12px; color: var(--muted); }
+
+  /* AUDIT CATEGORIES */
+  .categories {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+  }
+  .cat-btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .cat-btn:hover, .cat-btn.active {
+    border-color: var(--accent-blue);
+    color: var(--accent-blue);
+    background: rgba(56,182,255,0.07);
+  }
+
+  /* ISSUE CARDS */
+  .issues { display: flex; flex-direction: column; gap: 16px; margin-bottom: 50px; }
+  .issue-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .issue-card:hover { border-color: #35354a; }
+  .issue-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 22px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .severity-badge {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+  .sev-critical { background: rgba(255,59,59,0.15); color: var(--accent-red); border: 1px solid rgba(255,59,59,0.3); }
+  .sev-major { background: rgba(245,196,0,0.12); color: var(--accent-yellow); border: 1px solid rgba(245,196,0,0.3); }
+  .sev-minor { background: rgba(56,182,255,0.1); color: var(--accent-blue); border: 1px solid rgba(56,182,255,0.3); }
+  .sev-suggestion { background: rgba(162,89,255,0.1); color: var(--accent-purple); border: 1px solid rgba(162,89,255,0.3); }
+
+  .issue-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--text);
+    flex: 1;
+  }
+  .issue-category {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+  .chevron {
+    color: var(--muted);
+    transition: transform 0.25s;
+    font-size: 12px;
+  }
+  .issue-card.open .chevron { transform: rotate(180deg); }
+  .issue-body {
+    display: none;
+    padding: 0 22px 22px;
+    border-top: 1px solid var(--border);
+  }
+  .issue-card.open .issue-body { display: block; }
+
+  .issue-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+  .issue-section-label {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .issue-text { font-size: 13px; color: #bbbbd0; line-height: 1.7; }
+  .fix-box {
+    background: rgba(46,255,139,0.05);
+    border: 1px solid rgba(46,255,139,0.2);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .proof-box {
+    background: rgba(56,182,255,0.05);
+    border: 1px solid rgba(56,182,255,0.2);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+
+  /* VISUAL PROOF MOCKUPS */
+  .mockup {
+    margin-top: 14px;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: #0e0e12;
+    padding: 12px;
+  }
+  .mockup-label {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .mockup-nav {
+    background: #fff;
+    border-radius: 6px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #333;
+    font-family: 'DM Mono', monospace;
+    margin-bottom: 8px;
+  }
+  .mockup-nav .logo-area { font-weight: 700; color: #1a1a1a; margin-right: auto; }
+  .mockup-nav a { color: #444; font-size: 12px; }
+  .nav-no-dropdown { position: relative; display: inline-block; }
+  .dropdown-ghost {
+    position: absolute; top: 100%; left: 0;
+    background: #fff; border: 1px solid #ddd; border-radius: 4px;
+    padding: 6px 0; width: 140px; font-size: 11px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  }
+  .dropdown-ghost div { padding: 5px 12px; color: #333; }
+  .arrow-indicator {
+    position: absolute; top: -6px; left: 12px;
+    width: 10px; height: 10px;
+    background: #fff; border-left: 1px solid #ddd; border-top: 1px solid #ddd;
+    transform: rotate(45deg);
+  }
+  .bad-tag { background: rgba(255,59,59,0.15); color: var(--accent-red); padding: 2px 7px; border-radius: 4px; font-size: 11px; }
+  .good-tag { background: rgba(46,255,139,0.15); color: var(--accent-green); padding: 2px 7px; border-radius: 4px; font-size: 11px; }
+
+  .before-after {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px;
+  }
+  .ba-box { border-radius: 8px; padding: 14px; }
+  .ba-box.before { background: rgba(255,59,59,0.05); border: 1px solid rgba(255,59,59,0.2); }
+  .ba-box.after { background: rgba(46,255,139,0.05); border: 1px solid rgba(46,255,139,0.2); }
+  .ba-label { font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 8px; }
+  .ba-box.before .ba-label { color: var(--accent-red); }
+  .ba-box.after .ba-label { color: var(--accent-green); }
+
+  /* PERF BAR */
+  .perf-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; margin-top: 16px; }
+  .perf-item label { font-size: 12px; color: var(--muted); display: flex; justify-content: space-between; margin-bottom: 6px; }
+  .perf-item label span { color: var(--text); }
+  .bar { height: 6px; border-radius: 3px; background: var(--border); overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 3px; }
+
+  /* PRIORITY TABLE */
+  .priority-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+  .priority-table th {
+    text-align: left; padding: 10px 14px;
+    font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--muted); border-bottom: 1px solid var(--border);
+  }
+  .priority-table td {
+    padding: 12px 14px;
+    font-size: 13px;
+    border-bottom: 1px solid #1a1a22;
+    vertical-align: top;
+  }
+  .priority-table tr:last-child td { border-bottom: none; }
+  .p-tag {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 4px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .p1 { background: rgba(255,59,59,0.15); color: var(--accent-red); }
+  .p2 { background: rgba(245,196,0,0.12); color: var(--accent-yellow); }
+  .p3 { background: rgba(56,182,255,0.1); color: var(--accent-blue); }
+  .effort-pill {
+    font-size: 11px; padding: 3px 9px; border-radius: 20px;
+    background: var(--surface); border: 1px solid var(--border); color: var(--muted);
+  }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 24px 60px;
+    display: flex; justify-content: space-between; align-items: center;
+    color: var(--muted); font-size: 12px;
+  }
+
+  @media (max-width: 800px) {
+    header, main, footer { padding-left: 24px; padding-right: 24px; }
+    .summary-grid { grid-template-columns: 1fr 1fr; }
+    .issue-grid { grid-template-columns: 1fr; }
+    .before-after { grid-template-columns: 1fr; }
+    h1 { font-size: 26px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <div class="eyebrow">Website Audit Report — 2025</div>
+    <h1>DigiCroz<span>.com</span><br/>Analysis</h1>
+    <div style="color:var(--muted); font-size:12px; margin-top:10px;">digicroz.com · Khamgaon, Maharashtra · Next.js</div>
+  </div>
+  <div class="header-right">
+    <div class="score-circle">
+      <div class="score-inner">38</div>
+    </div>
+    <div class="score-label">Overall Score / 100</div>
+  </div>
+</header>
+
+<main>
+
+  <!-- SUMMARY -->
+  <div class="section-title">Audit Summary</div>
+  <div class="summary-grid">
+    <div class="stat-card red">
+      <div class="stat-num">6</div>
+      <div class="stat-label">Critical Issues</div>
+    </div>
+    <div class="stat-card yellow">
+      <div class="stat-num">8</div>
+      <div class="stat-label">Major Issues</div>
+    </div>
+    <div class="stat-card blue">
+      <div class="stat-num">5</div>
+      <div class="stat-label">Minor Issues</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-num">7</div>
+      <div class="stat-label">Suggestions</div>
+    </div>
+  </div>
+
+  <!-- FILTER -->
+  <div class="section-title">Issues &amp; Findings</div>
+  <div class="categories">
+    <button class="cat-btn active" onclick="filterCards('all')">All (26)</button>
+    <button class="cat-btn" onclick="filterCards('navigation')">Navigation</button>
+    <button class="cat-btn" onclick="filterCards('content')">Content</button>
+    <button class="cat-btn" onclick="filterCards('performance')">Performance</button>
+    <button class="cat-btn" onclick="filterCards('ux')">UX / Conversion</button>
+    <button class="cat-btn" onclick="filterCards('seo')">SEO</button>
+    <button class="cat-btn" onclick="filterCards('accessibility')">Accessibility</button>
+    <button class="cat-btn" onclick="filterCards('mobile')">Mobile</button>
+  </div>
+
+  <div class="issues" id="issueList">
+
+    <!-- 1 -->
+    <div class="issue-card" data-cat="navigation" onclick="toggle(this)">
+      <div class="issue-header">
+        <span class="severity-badge sev-critical">Critical</span>
+        <span class="issue-title">Navigation menu is broken — "Services" dropdown is non-functional</span>
+        <span class="issue-category">Navigation</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="issue-body">
+        <div class="issue-grid">
+          <div>
+            <div class="issue-section-label">Problem</div>
+            <div class="issue-text">The "Services" nav item has a dropdown sub-item labeled <strong>"Consultation"</strong> followed by a horizontal rule. This renders as a <strong>decorative separator with one orphaned link</strong> rather than a real dropdown menu. Clicking "Services" does <em>not</em> navigate to the /services page either — it is just a label. A first-time visitor cannot discover what services are offered from the nav alone.</div>
+            <div class="mockup">
+              <div class="mockup-label">Current Broken State</div>
+              <div class="mockup-nav">
+                <span class="logo-area">DigiCroz</span>
+                <a>Home</a>
+                <div class="nav-no-dropdown" style="position:relative;">
+                  <a style="color:#1a6aff; font-weight:600;">Services ▾</a>
+                  <div class="dropdown-ghost">
+                    <div class="arrow-indicator"></div>
+                    <div>Consultation</div>
+                    <div style="border-top:1px solid #eee; margin:4px 0;"></div>
+                    <div style="color:#bbb; font-size:10px; padding:4px 12px;">← orphaned HR tag</div>
+                  </div>
+                </div>
+                <a>Contact</a>
+              </div>
+              <div style="font-size:11px; color: var(--accent-red);">⚠ Only "Consultation" shows up. All other services missing from nav dropdown.</div>
+            </div>
+          </div>
+          <div>
+            <div class="fix-box">
+              <div class="issue-section-label">Recommended Fix</div>
+              <div class="issue-text">Replace the sparse dropdown with a proper multi-column mega-menu or structured dropdown listing all 8 services: App Development, Website Dev, SEO, Business Automation, Admin Panel, E-commerce, IT Consulting, Digital Marketing. Each should link to its own anchor/page. The "Services" parent should also be a clickable link to /services.</div>
+            </div>
+            <div class="before-after" style="margin-top:10px;">
+              <div class="ba-box before"><div class="ba-label">Before</div><div class="issue-text" style="font-size:12px;">Services ▾ → only "Consultation" + HR</div></div>
+              <div class="ba-box after"><div class="ba-label">After</div><div class="issue-text" style="font-size:12px;">Services ▾ → 8 categorised service links in a clean dropdown</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2 -->
+    <div class="issue-card" data-cat="content" onclick="toggle(this)">
+      <div class="issue-header">
+        <span class="severity-badge sev-critical">Critical</span>
+        <span class="issue-title">Fake/inflated statistics — "7,563+ Technology" counter has no context</span>
+        <span class="issue-category">Content / Trust</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="issue-body">
+        <div class="issue-grid">
+          <div>
+            <div class="issue-section-label">Problem</div>
+            <div class="issue-text">The hero section displays <strong>"7,563+"</strong> with only the word "Technology" as a label and a hand icon. This number has <em>zero</em> context — 7,563 what? Simultaneously, the achievements section says <strong>"30+ Satisfied Clients"</strong> and <strong>"50+ Finished Projects"</strong>. These two sets of numbers directly contradict each other and destroy credibility. A company cannot have 7,563 of something yet only 30 clients and 50 projects.</div>
+          </div>
+          <div>
+            <div class="fix-box">
+              <div class="issue-section-label">Recommended Fix</div>
+              <div class="issue-text">Either remove the unexplained 7,563 counter or replace it with a meaningful, verifiable stat (e.g., "Lines of code deployed", "Hours of development delivered"). Ensure all stats across the page are consistent and truthful. Trust metrics are one of the highest-impact conversion factors for a B2B IT company.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 -->
+    <div class="issue-card" data-cat="content" onclick="toggle(this)">
+      <div class="issue-header">
+        <span class="severity-badge sev-critical">Critical</span>
+        <span class="issue-title">"Recent Post" section in footer is completely empty</span>
+        <span class="issue-category">Content</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="issue-body">
+        <div class="issue-grid">
+          <div>
+            <div class="issue-section-label">Problem</div>
+            <div class="issue-text">The footer has a <strong>"Recent Post"</strong> column with a heading and a horizontal rule — but zero actual posts below it. This is a placeholder section that was never populated. It signals incompleteness and damages professionalism. Every page (Home, Services, Contact) exhibits this same empty block.</div>
+          </div>
+          <div>
+            <div class="fix-box">
+              <div class="issue-section-label">Recommended Fix</div>
+              <div class="issue-text">Either: (A) Remove the "Recent Post" column entirely and redistribute footer space to Contact and Quick Links, or (B) Publish 2–3 blog/news posts and populate this section with titles + dates. Option B also has significant SEO benefits.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 -->
+    <div class="issue-card" data-cat="ux" onclick="toggle(this)">
+      <div class="issue-header">
+        <span class="severity-badge sev-critical">Critical</span>
+        <span class="issue-title">Contact form has no visible input fields — just a textarea placeholder</span>
+        <span class="issue-category">UX / Conversion</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="issue-body">
+        <div class="issue-grid">
+          <div>
+            <div class="issue-section-label">Problem</div>
+            <div class="issue-text">The /contact page shows <strong>"Your Message / Query"</strong> as the only visible form label, with a single "Send Message" button. There are no input fields for Name, Email, Phone, or Subject visible in the rendered HTML. Without a name or email field, the company cannot respond to inquiries — this is a lead generation failure. The form appears to be broken or incomplete.</div>
+          </div>
+          <div>
+            <div class="fix-box">
+              <div class="issue-section-label">Recommended Fix</div>
+              <div class="issue-text">Add the standard contact form fields: Full Name (required), Email Address (required), Phone Number (optional), Service Interest (dropdown), and Message (textarea). Add real-time validation feedback. Integrate with an email service (Resend, SendGrid, Nodemailer). Add a success confirmation state after submit.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5 -->
+    <div class="issue-card" data-cat="performance" onclick="toggle(this)">
+      <div class="issue-header">
+        <span class="severity-badge sev-critical">Critical</span>
+        <span class="issue-title">Infinite marquee carousel duplicates all content 3× — bloats DOM</span>
+        <span class="issue-category">Performance</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="issue-body">
+        <div class="issue-grid">
+          <div>
+            <div class="issue-section-label">Problem</div>
+            <div class="issue-text">Both the "IT Services" horizontal ticker and the "Brand Logos" carousel render each item <strong>three times</strong> in the DOM (evidenced by the triple repetition in the HTML). For the brand logo carousel, this means <strong>45 &lt;img&gt; elements</strong> are loaded (15 logos × 3). Each is a separate HTTP request. This inflates DOM node count, slows rendering, and wastes bandwidth — especially on mobile.</div>
+          </div>
+          <div>
+            <div class="fix-box">
+              <div class="issue-section-label">Recommended Fix</div>
+              <div class="issue-text">Use CSS-only infinite scroll with <code>@keyframes scroll</code> on a single set of items. For logos, use a single array of 15 items and duplicate <em>only in CSS</em> via <code>::after</code> pseudo-element or a second visually-identical row hidden from accessibility tree. This reduces DOM nodes by ~66% and eliminates redundant network requests.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6 -->
+    <div class="issue-card" data-cat="seo" onclick="toggle(this)">
+      <div class="issue-header">
+        <span class="severity-badge sev-critical">Critical</span>
+        <span class="issue-title">Services page has no individual service detail pages or anchors</span>
+        <span class="issue-category">SEO / Content</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="issue-body">
+        <div class="issue-grid">
+          <div>
+            <div class="issue-section-label">Problem</div>
+            <div class="issue-text">The /services page lists all 8 services as cards, but <strong>none of them link anywhere</strong>. There are no individual service pages (e.g., /services/seo-optimization, /services/app-development). This means zero long-tail SEO potential, no place to put case studies, no pricing info, and no way to deep-link a specific service to a prospect. Each service card is a dead-end.</div>
+          </div>
+          <div>
+            <div class="fix-box">
+              <div class="issue-section-label">Recommended Fix</div>
+              <div class="issue-text">Create individual service pages for each offering. Each page should have: a hero with the service name, a 3–5 paragraph description, key deliverables list, technology stack used, relevant case study or client example, and a CTA to "Get A Quote." This alone can 8× the site's indexable content and capture high-intent search traffic.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7 -->
+    <div class="issue-card" data-cat="ux" onclick="toggle(this)">
+      <div class="issue-header">
+        <span class="severity-badge sev-major">Major</span>
+        <span class="issue-title">"Get A Quote" CTA appears 6+ times with no differentiation</span>
+        <span class="issue-category">UX / Conversion</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="issue-body">
+        <div class="issue-grid">
+          <div>
+            <div class="issue-section-label">Problem</div>
+            <div class="issue-text">The CTA "Get A Quote" appears in the navbar, mobile drawer, hero section, and footer — at least 6 times across a single page. All buttons look identical and presumably link to the same destination. This creates <strong>CTA fatigue</strong> without progression. There are no secondary CTAs (e.g., "View Portfolio", "Book a Call", "Learn More") to guide users at different stages of intent.</div>
+          </div>
+          <div>
+            <div class="fix-box">
+              <div class="issue-section-label">Recommended Fix</div>
+              <div class="issue-text">Implement a <strong>CTA hierarchy</strong>: Primary = "Get A Quote" (1–2 times per page), Secondary = "View Our Work" or "Book a Free Call" (mid-page), Tertiary = "Learn More" on individual service cards. Each stage of the page should have a contextually appropriate CTA that matches user intent at that scroll depth.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8 -->
+    <div class="issue-card" data-cat="content" onclick="toggle(this)">
+      <div class="issue-header">
+        <span class="severity-badge sev-major">Major</span>
+        <span class="issue-title">No portfolio / case studies section anywhere on the site</span>
+        <span class="issue-category">Content / Trust</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="issue-body">
+        <div class="issue-grid">
+          <div>
+            <div class="issue-section-label">Problem</div>
+            <div class="issue-text">An IT services company's single most powerful trust signal is <strong>proof of work</strong>. DigiCroz claims "25+ Brands Trust Us" and shows logos — but there is no portfolio page, no case studies, no before/after screenshots, no project descriptions. A potential client has no way to evaluate the quality of work before reaching out. This is the #1 conversion blocker for B2B IT services.</div>
+          </div>
+          <div>
+            <div class="fix-box">
+              <div class="issue-section-label">Recommended Fix</div>
+              <div class="issue-text">Add a /portfolio page with 6–10 project showcases. Each entry: client name (if permitted), project category, problem solved, solution delivered, tech stack, and a screenshot or live link. Even 3 strong case studies can dramatically improve conversion rates vs. 25 logo thumbnails with no context.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9 -->
+    <div class="issue-card" data-cat="performance" onclick="toggle(this)">
+      <div class="issue-header">
+        <span class="severity-badge sev-major">Major</span>
+        <span class="issue-title">All client logos served as unoptimized JPG/PNG with no lazy loading</span>
+        <span class="issue-category">Performance</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="issue-body">
+        <div class="issue-grid">
+          <div>
+            <div class="issue-section-label">Problem</div>
+            <div class="issue-text">The 15 client brand logos are all loaded as JPG or PNG files. Given that brand logos are simple, mostly monochromatic graphics, they should be SVGs or WebP. Additionally, since these appear in an auto-scrolling carousel below the fold, they should use <code>loading="lazy"</code>. Since they are duplicated 3×, there are <strong>45 unoptimized image requests</strong> triggered on page load.</div>
+            <div class="perf-grid">
+              <div class="perf-item">
+                <label>Image optimization <span style="color:var(--accent-red)">Poor</span></label>
+                <div class="bar"><div class="bar-fill" style="width:15%; background: var(--accent-red);"></div></div>
+              </div>
+              <div class="perf-item">
+                <label>Lazy loading <span style="color:var(--accent-red)">None</span></label>
+                <div class="bar"><div class="bar-fill" style="width:0%; background: var(--accent-red);"></div></div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="fix-box">
+              <div class="issue-section-label">Recommended Fix</div>
+              <div class="issue-text">Since this is a Next.js site, use <code>&lt;Image&gt;</code> from <code>next/image</code> for all logos. This auto-converts to WebP, handles lazy loading, and resizes appropriately. For logos, target a fixed height of 40–60px and let Next.js optimize accordingly. Expected payload reduction: 60–80%.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10 -->
+    <div class="issue-card" data-cat="mobile" onclick="toggle(this)">
+      <div class="issue-header">
+        <span class="severity-badge sev-major">Major</span>
+        <span class="issue-title">Mobile navigation drawer shows duplicate sidebar with redundant contact info</span>
+        <span class="issue-category">Mobile</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="issue-body">
+        <div class="issue-grid">
+          <div>
+            <div class="issue-section-label">Problem</div>
+            <div class="issue-text">The mobile menu opens a <strong>full sidebar</strong> that repeats the Contact Info (address, email, phone) — the same info already in the topbar. On a small mobile screen, the sidebar is dominated by contact details instead of navigation links. The "Follow Us" social section appears in the topbar but social links are not populated. This clutters mobile UX significantly.</div>
+          </div>
+          <div>
+            <div class="fix-box">
+              <div class="issue-section-label">Recommended Fix</div>
+              <div class="issue-text">Simplify the mobile drawer to: Logo → Nav links (Home, Services [expandable], Contact) → Single primary CTA button → Social icons (if populated). Remove duplicate contact details from the drawer. Reserve the drawer for navigation, not contact info repetition.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 11 -->
+    <div class="issue-card" data-cat="seo" onclick="toggle(this)">
+      <div class="issue-header">
+        <span class="severity-badge sev-major">Major</span>
+        <span class="issue-title">Page titles and meta descriptions are generic / duplicated</span>
+        <span class="issue-category">SEO</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="issue-body">
+        <div class="issue-grid">
+          <div>
+            <div class="issue-section-label">Problem</div>
+            <div class="issue-text">Both the homepage and contact page share the title <em>"DigiCroz | Leading IT Solutions Company in Maharashtra, India"</em>. The services page uses a different title but the pattern suggests meta descriptions may also be missing or duplicated. Duplicate titles confuse search engines about which page to rank and dilute SEO authority across pages.</div>
+          </div>
+          <div>
+            <div class="fix-box">
+              <div class="issue-section-label">Recommended Fix</div>
+              <div class="issue-text">Each page needs a unique, keyword-rich title (55–60 chars) and meta description (150–160 chars). For a local IT company: Home → "IT Solutions & Web Development in Khamgaon, Maharashtra | DigiCroz", Services → "App Dev, SEO & Digital Marketing Services | DigiCroz", Contact → "Contact DigiCroz — Get a Free IT Consultation | Khamgaon".</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 12 -->
+    <div class="issue-card" data-cat="accessibility" onclick="toggle(this)">
+      <div class="issue-header">
+        <span class="severity-badge sev-major">Major</span>
+        <span class="issue-title">Service cards and decorative icons have no alt text or ARIA labels</span>
+        <span class="issue-category">Accessibility</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="issue-body">
+        <div class="issue-grid">
+          <div>
+            <div class="issue-section-label">Problem</div>
+            <div class="issue-text">All service section icons (ui-des.svg, it-con.svg, it-mag.svg, etc.) are rendered as <code>&lt;img&gt;</code> tags with no <code>alt</code> attribute in the source markup. Similarly, the <code>lineShape</code> decorative images have no <code>alt=""</code> empty attribute to signal they are decorative to screen readers. This fails WCAG 2.1 Level A compliance (Success Criterion 1.1.1 Non-text Content).</div>
+          </div>
+          <div>
+            <div class="fix-box">
+              <div class="issue-section-label">Recommended Fix</div>
+              <div class="issue-text">For meaningful icons: <code>alt="Custom App Development icon"</code>. For purely decorative images (line shapes, background dots, masks): <code>alt=""</code> and <code>role="presentation"</code>. Audit all 20+ images on the homepage. This is a fast, high-impact fix that improves accessibility and crawlability simultaneously.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 13 -->
+    <div class="issue-card" data-cat="ux" onclick="toggle(this)">
+      <div class="issue-header">
+        <span class="severity-badge sev-major">Major</span>
+        <span class="issue-title">No testimonials / reviews anywhere on the site</span>
+        <span class="issue-category">UX / Trust</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="issue-body">
+        <div class="issue-grid">
+          <div>
+            <div class="issue-section-label">Problem</div>
+            <div class="issue-text">The site claims satisfied clients and finished projects but provides <strong>zero social proof</strong> in the form of testimonials, reviews, star ratings, or client quotes. For an IT services company targeting SMBs and local businesses in Maharashtra, testimonials in regional language (Marathi/Hindi) alongside English would be particularly powerful. The trust gap between "we say we're good" and "clients say we're good" is enormous.</div>
+          </div>
+          <div>
+            <div class="fix-box">
+              <div class="issue-section-label">Recommended Fix</div>
+              <div class="issue-text">Add a testimonials section between the Achievements stats and the Portfolio carousel. Include: client name, company, 2–3 sentence quote, star rating, and optionally a photo. 4–6 testimonials in a slider format. Consider embedding Google Reviews widget to leverage existing review infrastructure with credibility signals.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 14 -->
+    <div class="issue-card" data-cat="content" onclick="toggle(this)">
+      <div class="issue-header">
+        <span class="severity-badge sev-major">Major</span>
+        <span class="issue-title">Typo in contact page: "Ready To Get Stared?" should be "Started"</span>
+        <span class="issue-category">Content / Copy</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="issue-body">
+        <div class="issue-grid">
+          <div>
+            <div class="issue-section-label">Problem</div>
+            <div class="issue-text">The contact page displays <strong>"Ready To Get Stared?"</strong> — missing the letter 't'. This is visible to every single visitor who lands on the contact page. For a company selling professional IT services, a typo on the contact page is a credibility-damaging error. It suggests a lack of quality control that may extend to their development work.</div>
+          </div>
+          <div>
+            <div class="fix-box">
+              <div class="issue-section-label">Recommended Fix</div>
+              <div class="issue-text">Change "Stared" → "Started". Additionally, run the entire site copy through Grammarly or a similar proofreading tool. The current headline "Ready To Get Started?" is also weak — consider: "Let's Build Something Together" or "Tell Us About Your Project" for higher conversion impact.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 15 -->
+    <div class="issue-card" data-cat="ux" onclick="toggle(this)">
+      <div class="issue-header">
+        <span class="severity-badge sev-minor">Minor</span>
+        <span class="issue-title">No sticky/fixed header on scroll — logo and nav disappear</span>
+        <span class="issue-category">UX / Navigation</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="issue-body">
+        <div class="issue-grid">
+          <div>
+            <div class="issue-section-label">Problem</div>
+            <div class="issue-text">As users scroll down the page, the navigation bar scrolls away. There is no sticky header, meaning to navigate to another page a user must scroll all the way back to the top. On long-form pages this adds unnecessary friction. The "Get A Quote" CTA in the nav also disappears, reducing conversion opportunities.</div>
+          </div>
+          <div>
+            <div class="fix-box">
+              <div class="issue-section-label">Recommended Fix</div>
+              <div class="issue-text">Add <code>position: sticky; top: 0;</code> to the header with a semi-transparent backdrop blur on scroll. In Next.js, add a <code>scrolled</code> state via <code>useScrollPosition</code> hook to conditionally apply a background. This is a standard industry pattern and takes ~30 mins to implement.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 16 -->
+    <div class="issue-card" data-cat="seo" onclick="toggle(this)">
+      <div class="issue-header">
+        <span class="severity-badge sev-minor">Minor</span>
+        <span class="issue-title">No Google Business / local schema markup for local SEO</span>
+        <span class="issue-category">SEO</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="issue-body">
+        <div class="issue-grid">
+          <div>
+            <div class="issue-section-label">Problem</div>
+            <div class="issue-text">DigiCroz is explicitly a local business based in Khamgaon, Maharashtra. However, there is no <code>LocalBusiness</code> JSON-LD schema markup on the homepage. This means Google cannot properly surface this business in local search results, map packs, or the Knowledge Panel. For a local IT company, local SEO is likely the primary acquisition channel.</div>
+          </div>
+          <div>
+            <div class="fix-box">
+              <div class="issue-section-label">Recommended Fix</div>
+              <div class="issue-text">Add JSON-LD structured data in the &lt;head&gt;: <code>@type: "LocalBusiness"</code> with name, address, phone, email, openingHours, and geo coordinates. Also add <code>@type: "Service"</code> markup for each of the 8 services. This can meaningfully improve local pack visibility within weeks of implementation.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 17 -->
+    <div class="issue-card" data-cat="mobile" onclick="toggle(this)">
+      <div class="issue-header">
+        <span class="severity-badge sev-minor">Minor</span>
+        <span class="issue-title">Horizontal scroll on mobile due to marquee overflow</span>
+        <span class="issue-category">Mobile</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="issue-body">
+        <div class="issue-grid">
+          <div>
+            <div class="issue-section-label">Problem</div>
+            <div class="issue-text">The scrolling ticker marquees (IT Services names and client logos) can cause horizontal overflow on mobile browsers if not properly contained. Without <code>overflow: hidden</code> on the parent container or proper clip paths, users may be able to horizontally scroll the page — a common mobile UX antipattern that breaks layout expectations.</div>
+          </div>
+          <div>
+            <div class="fix-box">
+              <div class="issue-section-label">Recommended Fix</div>
+              <div class="issue-text">Wrap all marquee containers in a <code>div</code> with <code>overflow: hidden; width: 100%;</code>. On the <code>&lt;body&gt;</code> or root layout, add <code>overflow-x: hidden;</code> as a defensive measure. Test on physical Android and iOS devices, not just browser dev tools.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 18 -->
+    <div class="issue-card" data-cat="ux" onclick="toggle(this)">
+      <div class="issue-header">
+        <span class="severity-badge sev-suggestion">Suggestion</span>
+        <span class="issue-title">Add a pricing page or at least a pricing philosophy section</span>
+        <span class="issue-category">UX / Conversion</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="issue-body">
+        <div class="issue-grid">
+          <div>
+            <div class="issue-section-label">Opportunity</div>
+            <div class="issue-text">No pricing information exists anywhere on the site. While custom IT projects rarely have fixed prices, having even a "Starting from ₹X" or a tiered package table for common services (e.g., basic website, e-commerce setup, SEO monthly retainer) would significantly reduce the friction for prospects to reach out. Transparency builds trust.</div>
+          </div>
+          <div>
+            <div class="fix-box">
+              <div class="issue-section-label">Recommended Implementation</div>
+              <div class="issue-text">Add a /pricing page with 3–4 service packages (Basic, Professional, Enterprise). Use a toggle for monthly/one-time. Even rough indicative ranges like "Website Development: ₹15,000 – ₹50,000" give prospects enough signal to qualify themselves, reducing irrelevant inquiry friction on both sides.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 19 -->
+    <div class="issue-card" data-cat="ux" onclick="toggle(this)">
+      <div class="issue-header">
+        <span class="severity-badge sev-suggestion">Suggestion</span>
+        <span class="issue-title">Add a WhatsApp floating button for instant contact (India-specific UX)</span>
+        <span class="issue-category">UX / Conversion</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="issue-body">
+        <div class="issue-grid">
+          <div>
+            <div class="issue-section-label">Opportunity</div>
+            <div class="issue-text">For a Maharashtra-based business targeting local Indian SMBs, WhatsApp is the dominant business communication channel. A floating WhatsApp button in the bottom-right corner would directly leverage this behavior. The phone number (+91-9834877006) is already present — it just needs a WhatsApp CTA wrapping it. This is one of the highest-ROI additions possible for a local Indian business website.</div>
+          </div>
+          <div>
+            <div class="fix-box">
+              <div class="issue-section-label">Recommended Implementation</div>
+              <div class="issue-text">Add a fixed-position WhatsApp button: <code>https://wa.me/919834877006?text=Hi%2C+I%27m+interested+in+your+IT+services</code>. Style it with the WhatsApp green (#25D366) and a pulse animation. Pre-fill the message for lower friction. Implementation time: ~20 minutes.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 20 -->
+    <div class="issue-card" data-cat="content" onclick="toggle(this)">
+      <div class="issue-header">
+        <span class="severity-badge sev-suggestion">Suggestion</span>
+        <span class="issue-title">Add a FAQ section addressing common client objections</span>
+        <span class="issue-category">Content / SEO</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="issue-body">
+        <div class="issue-grid">
+          <div>
+            <div class="issue-section-label">Opportunity</div>
+            <div class="issue-text">No FAQ section exists. Common IT client questions ("How long does a website take?", "Do you offer maintenance?", "What technologies do you use?", "Do you work with clients outside Maharashtra?") go unanswered. FAQs serve double duty: they address objections that prevent conversions AND they generate FAQ-schema rich snippets in search results, dramatically improving SEO click-through rates.</div>
+          </div>
+          <div>
+            <div class="fix-box">
+              <div class="issue-section-label">Recommended Implementation</div>
+              <div class="issue-text">Add 6–8 FAQ items on the homepage (above footer) and more detailed FAQs on each service page. Implement <code>FAQPage</code> JSON-LD schema. Use an accordion component for clean UX. Questions should target exact phrases people search: "how much does website development cost in India", "best IT company in Buldhana", etc.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PRIORITY ROADMAP -->
+  <div class="section-title">Recommended Fix Priority Roadmap</div>
+  <div style="background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 50px;">
+    <table class="priority-table">
+      <thead>
+        <tr>
+          <th>Priority</th>
+          <th>Issue</th>
+          <th>Impact Area</th>
+          <th>Est. Effort</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="p-tag p1">P1</span></td>
+          <td>Fix contact form — add all required input fields</td>
+          <td>Conversions</td>
+          <td><span class="effort-pill">2–4 hrs</span></td>
+        </tr>
+        <tr>
+          <td><span class="p-tag p1">P1</span></td>
+          <td>Fix typo "Stared" → "Started" on contact page</td>
+          <td>Credibility</td>
+          <td><span class="effort-pill">&lt; 5 min</span></td>
+        </tr>
+        <tr>
+          <td><span class="p-tag p1">P1</span></td>
+          <td>Fix/rebuild Services nav dropdown with all 8 services</td>
+          <td>Navigation / UX</td>
+          <td><span class="effort-pill">1–2 hrs</span></td>
+        </tr>
+        <tr>
+          <td><span class="p-tag p1">P1</span></td>
+          <td>Remove or populate empty "Recent Post" footer section</td>
+          <td>Professionalism</td>
+          <td><span class="effort-pill">30 min</span></td>
+        </tr>
+        <tr>
+          <td><span class="p-tag p1">P1</span></td>
+          <td>Add WhatsApp floating button</td>
+          <td>Conversions (India)</td>
+          <td><span class="effort-pill">20 min</span></td>
+        </tr>
+        <tr>
+          <td><span class="p-tag p2">P2</span></td>
+          <td>Add portfolio / case studies page</td>
+          <td>Trust / SEO</td>
+          <td><span class="effort-pill">1–2 weeks</span></td>
+        </tr>
+        <tr>
+          <td><span class="p-tag p2">P2</span></td>
+          <td>Create individual service detail pages</td>
+          <td>SEO / Conversions</td>
+          <td><span class="effort-pill">1 week</span></td>
+        </tr>
+        <tr>
+          <td><span class="p-tag p2">P2</span></td>
+          <td>Add testimonials section</td>
+          <td>Trust / Conversion</td>
+          <td><span class="effort-pill">3–5 hrs</span></td>
+        </tr>
+        <tr>
+          <td><span class="p-tag p2">P2</span></td>
+          <td>Fix duplicate marquee DOM — reduce 45 imgs to 15</td>
+          <td>Performance</td>
+          <td><span class="effort-pill">1–2 hrs</span></td>
+        </tr>
+        <tr>
+          <td><span class="p-tag p2">P2</span></td>
+          <td>Add sticky header with backdrop blur</td>
+          <td>UX / Navigation</td>
+          <td><span class="effort-pill">30 min</span></td>
+        </tr>
+        <tr>
+          <td><span class="p-tag p2">P2</span></td>
+          <td>Fix inconsistent / inflated statistics</td>
+          <td>Credibility</td>
+          <td><span class="effort-pill">1 hr</span></td>
+        </tr>
+        <tr>
+          <td><span class="p-tag p3">P3</span></td>
+          <td>Add LocalBusiness JSON-LD schema</td>
+          <td>Local SEO</td>
+          <td><span class="effort-pill">1 hr</span></td>
+        </tr>
+        <tr>
+          <td><span class="p-tag p3">P3</span></td>
+          <td>Unique page titles and meta descriptions</td>
+          <td>SEO</td>
+          <td><span class="effort-pill">1–2 hrs</span></td>
+        </tr>
+        <tr>
+          <td><span class="p-tag p3">P3</span></td>
+          <td>Alt text for all service icons and images</td>
+          <td>Accessibility / SEO</td>
+          <td><span class="effort-pill">1 hr</span></td>
+        </tr>
+        <tr>
+          <td><span class="p-tag p3">P3</span></td>
+          <td>Migrate logo images to next/image with WebP</td>
+          <td>Performance</td>
+          <td><span class="effort-pill">1–2 hrs</span></td>
+        </tr>
+        <tr>
+          <td><span class="p-tag p3">P3</span></td>
+          <td>Add FAQ section with schema</td>
+          <td>SEO / UX</td>
+          <td><span class="effort-pill">2–3 hrs</span></td>
+        </tr>
+        <tr>
+          <td><span class="p-tag p3">P3</span></td>
+          <td>Pricing page or indicative package table</td>
+          <td>UX / Conversion</td>
+          <td><span class="effort-pill">3–5 hrs</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SCORE BREAKDOWN -->
+  <div class="section-title">Score Breakdown by Category</div>
+  <div class="summary-grid" style="margin-bottom:50px;">
+    <div class="stat-card red">
+      <div class="stat-num" style="font-size:28px;">28<span style="font-size:16px; color:var(--muted)">/100</span></div>
+      <div class="stat-label">UX / Conversion</div>
+      <div class="perf-grid" style="margin-top:10px;"><div class="perf-item"><div class="bar"><div class="bar-fill" style="width:28%; background:var(--accent-red);"></div></div></div></div>
+    </div>
+    <div class="stat-card yellow">
+      <div class="stat-num" style="font-size:28px;">30<span style="font-size:16px; color:var(--muted)">/100</span></div>
+      <div class="stat-label">SEO</div>
+      <div class="perf-grid" style="margin-top:10px;"><div class="perf-item"><div class="bar"><div class="bar-fill" style="width:30%; background:var(--accent-yellow);"></div></div></div></div>
+    </div>
+    <div class="stat-card blue">
+      <div class="stat-num" style="font-size:28px;">45<span style="font-size:16px; color:var(--muted)">/100</span></div>
+      <div class="stat-label">Performance</div>
+      <div class="perf-grid" style="margin-top:10px;"><div class="perf-item"><div class="bar"><div class="bar-fill" style="width:45%; background:var(--accent-blue);"></div></div></div></div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-num" style="font-size:28px;">55<span style="font-size:16px; color:var(--muted)">/100</span></div>
+      <div class="stat-label">Visual Design</div>
+      <div class="perf-grid" style="margin-top:10px;"><div class="perf-item"><div class="bar"><div class="bar-fill" style="width:55%; background:var(--accent-green);"></div></div></div></div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div>DigiCroz Audit Report · digicroz.com · March 2025</div>
+  <div>26 findings · 6 Critical · 8 Major · 5 Minor · 7 Suggestions</div>
+</footer>
+
+<script>
+  function toggle(card) {
+    card.classList.toggle('open');
+  }
+
+  function filterCards(cat) {
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+
+    document.querySelectorAll('.issue-card').forEach(card => {
+      if (cat === 'all' || card.dataset.cat === cat) {
+        card.style.display = '';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  }
+</script>
+</body>
+</html>
